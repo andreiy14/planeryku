@@ -1,0 +1,26 @@
+{
+  "canisters": {
+    "planeryku_backend": {
+      "main": "src/planeryku_backend/main.mo",
+      "type": "motoko"
+    },
+    "planeryku_frontend": {
+      "dependencies": [
+        "planeryku_backend"
+      ],
+      "source": [
+        "src/planeryku_frontend/dist"
+      ],
+      "type": "assets",
+      "workspace": "planeryku_frontend"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}
