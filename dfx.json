@@ -4,6 +4,10 @@
       "main": "src/planeryku_backend/main.mo",
       "type": "motoko"
     },
+    "planeryku_project_backend": {
+      "main": "src/planeryku_project_backend/main.mo",
+      "type": "motoko"
+    },
     "planeryku_frontend": {
       "dependencies": [
         "planeryku_backend"
