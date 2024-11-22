@@ -4,6 +4,7 @@ import Text "mo:base/Text";
 import Error "mo:base/Error";
 import Debug "mo:base/Debug";
 import Iter "mo:base/Iter";
+
 actor Authentication {
 
   private stable var listUserEntries : [(Principal, Text)] = [];
@@ -21,6 +22,14 @@ actor Authentication {
     listUsers.put(user, userName);
 
     return "Success";
+  };
+
+  public query func getUser(userIdentity : Principal) : async ?Text {
+    let user = userIdentity;
+    if (listUsers.get(user) == null) {
+      return null;
+    };
+    return listUsers.get(user);
   };
 
   system func preupgrade() {
