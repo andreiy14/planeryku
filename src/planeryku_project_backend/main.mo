@@ -2,7 +2,10 @@ import HashMap "mo:base/HashMap";
 import Text "mo:base/Text";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
-import Principal "mo:base/Principal";
+
+// import Source uuid/async/SourceV4
+import Source "mo:uuid/async/SourceV4";
+import UUID "mo:uuid/UUID";
 
 actor Projects {
 
@@ -21,8 +24,28 @@ actor Projects {
 
     // function to add project
     public shared func addProject(project : Project) : async Text {
-        listProject.put(project.id, project);
-        return "Success";
+        try {
+
+            let source = Source.Source();
+            let uuid = UUID.toText(await source.new());
+
+            let newProject = {
+                id = uuid;
+                name = project.name;
+                status = project.status;
+                description = project.description;
+                startDate = project.startDate;
+                endDate = project.endDate;
+            };
+
+            listProject.put(uuid, newProject);
+
+            return "Project added successfully with ID: " # uuid;
+
+        } catch (e) {
+            return throw e;
+        };
+
     };
 
     // Query function for detail project
@@ -69,6 +92,32 @@ actor Projects {
             readyToDeploy = result.readyToDeploy;
             open = result.open;
             inProgress = result.inProgress;
+        };
+    };
+
+    // func to update  project
+    public shared func updateProject(project : Project) : async Text {
+        let id = project.id;
+        switch (listProject.get(id)) {
+            case null {
+                return "Error: Project ID not found.";
+            };
+            case (?_) {
+                listProject.put(id, project);
+                return "Project updated successfully.";
+            };
+        };
+
+    };
+
+    // func to change status project
+    public shared func updateStatusProject(projectId : Text, status : Text) : async Text {
+        switch (listProject.get(projectId)) {
+            case null return "Error: Project ID not found.";
+            case (?project) {
+                listProject.put(projectId, { project with status = status });
+                return "Project status updated successfully.";
+            };
         };
     };
 
