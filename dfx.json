@@ -8,6 +8,10 @@
       "main": "src/planeryku_project_backend/main.mo",
       "type": "motoko"
     },
+    "planeryku_task_backend": {
+      "main": "src/planeryku_task_backend/main.mo",
+      "type": "motoko"
+    },
     "planeryku_frontend": {
       "dependencies": [
         "planeryku_backend"
