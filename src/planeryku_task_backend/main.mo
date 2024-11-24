@@ -25,6 +25,48 @@ actor Tasks {
         return "Success";
     };
 
+    public func editTask({
+        taskId : Text;
+        name : Text;
+        description : Text;
+    }) : async Text {
+        switch (listTasks.get(taskId)) {
+            case (null) {
+                "Task not found";
+            };
+            case (?task) {
+                let updatedTask = {
+                    id = task.id;
+                    status = task.status;
+                    createDate = task.createDate;
+                    name = name;
+                    description = description;
+                };
+                listTasks.put(taskId, updatedTask);
+                "Task updated";
+            };
+        };
+    };
+
+    public func updateTaskStatus(taskId : Text, newStatus : Text) : async Text {
+        switch (listTasks.get(taskId)) {
+            case (null) {
+                "Task not found";
+            };
+            case (?task) {
+                let updatedTask = {
+                    id = task.id;
+                    name = task.name;
+                    description = task.description;
+                    createDate = task.createDate;
+                    status = newStatus;
+                };
+                listTasks.put(taskId, updatedTask);
+                "Status updated";
+            };
+        };
+    };
+
     // Query function for detail Tasks
     public query func getDetailTasks(taskId : Text) : async ?Tasks {
 
