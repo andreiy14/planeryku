@@ -2,10 +2,9 @@ import HashMap "mo:base/HashMap";
 import Text "mo:base/Text";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
-
-// import Source uuid/async/SourceV4
 import Source "mo:uuid/async/SourceV4";
 import UUID "mo:uuid/UUID";
+import ModuleConstant "../constant_backend/constant";
 
 actor Projects {
 
@@ -25,7 +24,6 @@ actor Projects {
     // function to add project
     public shared func addProject(project : Project) : async Text {
         try {
-
             let source = Source.Source();
             let uuid = UUID.toText(await source.new());
 
@@ -40,7 +38,7 @@ actor Projects {
 
             listProject.put(uuid, newProject);
 
-            return "Project added successfully with ID: " # uuid;
+            return ModuleConstant.ADD_PROJECT_SUCCESS # uuid;
 
         } catch (e) {
             return throw e;
@@ -100,11 +98,11 @@ actor Projects {
         let id = project.id;
         switch (listProject.get(id)) {
             case null {
-                return "Error: Project ID not found.";
+                return ModuleConstant.ERROR_MESSAGE_NOT_FOUND_ID;
             };
             case (?_) {
                 listProject.put(id, project);
-                return "Project updated successfully.";
+                return ModuleConstant.UPDATE_PROJECT_SUCCESS;
             };
         };
 
@@ -113,10 +111,10 @@ actor Projects {
     // func to change status project
     public shared func updateStatusProject(projectId : Text, status : Text) : async Text {
         switch (listProject.get(projectId)) {
-            case null return "Error: Project ID not found.";
+            case null return ModuleConstant.ERROR_MESSAGE_NOT_FOUND_ID;
             case (?project) {
                 listProject.put(projectId, { project with status = status });
-                return "Project status updated successfully.";
+                return ModuleConstant.UPDATE_STATUS_PROJECT_SUCCESS;
             };
         };
     };

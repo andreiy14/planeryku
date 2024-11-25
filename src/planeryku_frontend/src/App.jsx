@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { planeryku_backend } from 'declarations/planeryku_backend';
-
+// import { AuthClient } from "@dfinity/auth-client";
 function App() {
   const [greeting, setGreeting] = useState('');
 
@@ -10,20 +10,13 @@ function App() {
     planeryku_backend.greet(name).then((greeting) => {
       setGreeting(greeting);
     });
+
     return false;
   }
 
   return (
     <main>
-      <img src="/logo2.svg" alt="DFINITY logo" />
-      <br />
-      <br />
-      <form action="#" onSubmit={handleSubmit}>
-        <label htmlFor="name">Enter your name: &nbsp;</label>
-        <input id="name" alt="Name" type="text" />
-        <button type="submit">Click Me!</button>
-      </form>
-      <section id="greeting">{greeting}</section>
+      <div className="text-green-400">HELLO WORLD</div>
     </main>
   );
 }
