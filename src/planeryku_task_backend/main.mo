@@ -67,7 +67,7 @@ actor Tasks {
         };
     };
 
-       public query func searchTasksByName(name : Text) : async [Tasks] {
+    public query func searchTasksByName(name : Text) : async [Tasks] {
         var result : [Tasks] = [];
 
         for ((_, task) in listTasks.entries()) {
