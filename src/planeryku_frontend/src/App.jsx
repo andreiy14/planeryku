@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { planeryku_backend } from 'declarations/planeryku_backend';
 // import { AuthClient } from "@dfinity/auth-client";
 function App() {
-  const [greeting, setGreeting] = useState('');
+	const [greeting, setGreeting] = useState("");
 
   function handleSubmit(event) {
     event.preventDefault();
