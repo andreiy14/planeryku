@@ -1,44 +1,69 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './index.scss';
-import './index.css';
-import { AuthClient } from '@dfinity/auth-client';
-import { BrowserRouter, Routes, Route } from 'react-router';
+import "./index.scss";
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "./routes/layout";
+import ProjectTask from "./routes/pages/ProjectTask";
+import { createTheme, ThemeProvider } from "@mui/material";
 
-const init = async () => {
-  const authClient = await AuthClient.create();
+const router = createBrowserRouter(
+	[
+		{
+			path: "/",
+			element: <ProjectTask />,
+		},
+	],
+	{
+		future: {
+			v7_relativeSplatPath: true,
+			v7_fetcherPersist: true,
+			v7_normalizeFormMethod: true,
+			v7_partialHydration: true,
+			v7_skipActionErrorRevalidation: true,
+		},
+	}
+);
 
-  const data = 'test' === 'tes';
-  const handleRender = async (authClient) => {
-    return ReactDOM.createRoot(document.getElementById('root')).render(
-      <React.StrictMode>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<App />} />
-          </Routes>
-        </BrowserRouter>
-      </React.StrictMode>,
-    );
-  };
-  if (await authClient.isAuthenticated()) {
-    handleRender(authClient);
-    return;
-  }
-  await authClient.login({
-    identityProvider: 'https://identity.ic0.app/#authorize',
-    onSuccess: async () => {
-      handleRender(authClient);
-    },
-    onError: (error) => {
-      console.log('Error logging in', error);
-    },
-  });
-};
+const theme = createTheme({
+	palette: {
+		primary: {
+			main: '#3730a3',
+		},
+	},
+});
 
-init();
-// ReactDOM.createRoot(document.getElementById("root")).render(
-//   <React.StrictMode>
-//     <App />
-//   </React.StrictMode>
-// );
+// const init = async () => {
+//   const authClient = await AuthClient.create();
+//   console.log('auth', authClient)
+//   const handleRender = async (authClient) => {
+//     return ReactDOM.createRoot(document.getElementById("root")).render(
+//       <React.StrictMode>
+//         <App />
+//       </React.StrictMode>
+//     );
+//   };
+//   if (await authClient.isAuthenticated()) {
+//     handleRender(authClient);
+//     return;
+//   }
+//   await authClient.login({
+//     identityProvider: "https://identity.ic0.app/#authorize",
+//     onSuccess: async () => {
+//       handleRender(authClient);
+//     },
+//     onError: (error) => {
+//       console.log("Error logging in", error);
+//     },
+//   });
+// };
+
+// init();
+ReactDOM.createRoot(document.getElementById("root")).render(
+	<React.StrictMode>
+		<ThemeProvider theme={theme}>
+			<Layout>
+				<RouterProvider router={router} />
+			</Layout>
+		</ThemeProvider>
+	</React.StrictMode>
+);
