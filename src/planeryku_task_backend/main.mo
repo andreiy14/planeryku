@@ -67,6 +67,30 @@ actor Tasks {
         };
     };
 
+    public query func searchTasksByName(name : Text) : async [Tasks] {
+        var result : [Tasks] = [];
+
+        for ((_, task) in listTasks.entries()) {
+            if (Text.contains(task.name, #text name)) {
+                result := Array.append<Tasks>(result, [task]);
+            };
+        };
+
+        return result;
+    };
+
+    public query func filterTaskByStatus(status : Text) : async [Tasks] {
+        var result : [Tasks] = [];
+
+        for ((_, task) in listTasks.entries()) {
+            if (Text.contains(task.status, #text status)) {
+                result := Array.append<Tasks>(result, [task]);
+            };
+        };
+
+        return result;
+    };
+
     // Query function for detail Tasks
     public query func getDetailTasks(taskId : Text) : async ?Tasks {
 
@@ -82,6 +106,7 @@ actor Tasks {
         readyToDeploy : [Tasks];
         open : [Tasks];
         inProgress : [Tasks];
+        readyToTest: [Tasks];
     } {
         // Initialize the result map with explicit types
         var result = {
@@ -115,6 +140,7 @@ actor Tasks {
             readyToDeploy = result.readyToDeploy;
             open = result.open;
             inProgress = result.inProgress;
+            readyToTest = result.readyToTest;
         };
     };
 
