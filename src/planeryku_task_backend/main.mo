@@ -82,28 +82,22 @@ actor Tasks {
         };
 
         for ((_, tasks) in listTasks.entries()) {
-            switch (tasks.status) {
-                case ("readyToDeploy") {
-                    if (Text.contains(tasks.name, #text name)) {
+            if (Text.contains(tasks.name, #text name)) {
+                switch (tasks.status) {
+                    case ("readyToDeploy") {
                         result.readyToDeploy := Array.append<Tasks>(result.readyToDeploy, [tasks]);
                     };
-                };
-                case ("open") {
-                    if (Text.contains(tasks.name, #text name)) {
+                    case ("open") {
                         result.open := Array.append<Tasks>(result.open, [tasks]);
                     };
-                };
-                case ("inProgress") {
-                    if (Text.contains(tasks.name, #text name)) {
+                    case ("inProgress") {
                         result.inProgress := Array.append<Tasks>(result.inProgress, [tasks]);
                     };
-                };
-                case ("readyToTest") {
-                    if (Text.contains(tasks.name, #text name)) {
+                    case ("readyToTest") {
                         result.readyToTest := Array.append<Tasks>(result.readyToTest, [tasks]);
                     };
+                    case (_) {};
                 };
-                case (_) {};
             };
         };
 
