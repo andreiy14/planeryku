@@ -16,7 +16,6 @@ export default [
       'no-debugger': 'error', // Disallow debugger in production
 
       // React-specific rules
-      'react/react-in-jsx-scope': 'on', // No need to import React in JSX (React 17+)
       'react/prop-types': 'off', // Disable prop-types if using TypeScript
       'react/no-unescaped-entities': 'warn', // Warn about unescaped characters in JSX
 

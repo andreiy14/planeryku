@@ -3,6 +3,7 @@ import Text "mo:base/Text";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
 import Principal "mo:base/Principal";
+import Debug "mo:base/Debug";
 // import UUID "idempotency-keys";
 
 actor Tasks {
@@ -20,9 +21,9 @@ actor Tasks {
     var listTasks = HashMap.HashMap<Text, Tasks>(1, Text.equal, Text.hash);
 
     // function to add Tasks
-    public shared func addTasks(Tasks : Tasks) : async Text {
-        listTasks.put(Tasks.id, Tasks);
-        return "Success";
+    public shared func addTasks(task : Tasks) : async Text {
+        listTasks.put(task.id, task);
+        return "Task created: " # task.name # " with ID " # task.id;
     };
 
     public func editTask({
@@ -166,6 +167,8 @@ actor Tasks {
         };
 
         // Return the grouped data (fields automatically converted back to immutable)
+        Debug.print(debug_show (result));
+        // Debug.print(debug_show (Iter.toArray(listTasks.entries())));
         return {
             readyToDeploy = result.readyToDeploy;
             open = result.open;

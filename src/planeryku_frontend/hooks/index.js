@@ -1,0 +1,1 @@
+export { default as useAuthID } from './useAuthID';

@@ -4,12 +4,19 @@ import Text "mo:base/Text";
 import Error "mo:base/Error";
 import Debug "mo:base/Debug";
 import Iter "mo:base/Iter";
-
+import ModuleConstant "../constant_backend/constant";
 actor Authentication {
 
-  private stable var listUserEntries : [(Principal, Text)] = [];
+  public type Users = {
+    id : Text;
+    role : ?Text;
+    userName : Text;
 
-  private var listUsers = HashMap.HashMap<Principal, Text>(1, Principal.equal, Principal.hash);
+  };
+
+  private stable var listUserEntries : [(Principal, Users)] = [];
+
+  private var listUsers = HashMap.HashMap<Principal, Users>(1, Principal.equal, Principal.hash);
 
   public func addUser(userIdentity : Principal, userName : Text) : async Text {
     let user = userIdentity;
@@ -18,18 +25,41 @@ actor Authentication {
     if (Principal.isAnonymous(user)) {
       throw Error.reject("Anonymous principal not allowed");
     };
-    // If valid, proceed to add the user
-    listUsers.put(user, userName);
+    let dataUser = {
+      id = Principal.toText(userIdentity);
+      role = null;
+      userName = userName;
+    };
+    Debug.print(debug_show (dataUser));
+    listUsers.put(user, dataUser);
 
-    return "Success";
+    return ModuleConstant.SUCCESS_ADD_USER;
   };
 
-  public query func getUser(userIdentity : Principal) : async ?Text {
+  public query func getUser(userIdentity : Principal) : async (Text, ?Users) {
     let user = userIdentity;
-    if (listUsers.get(user) == null) {
-      return null;
+
+    switch (listUsers.get(user)) {
+      case (?userData) {
+        return (ModuleConstant.USER_FOUND, ?userData);
+      };
+      case null {
+        return ("", null);
+      };
     };
-    return listUsers.get(user);
+  };
+
+  public func setRoleUser(userIdentity : Principal, role : Text) : async Text {
+
+    switch (listUsers.get(userIdentity)) {
+      case null {
+        return ModuleConstant.USER_NOT_FOUND;
+      };
+      case (?user) {
+        listUsers.put(userIdentity, { user with role = ?role });
+        return ModuleConstant.SUCCESS_SET_ROLE_USER;
+      };
+    };
   };
 
   system func preupgrade() {
@@ -39,7 +69,7 @@ actor Authentication {
 
   system func postupgrade() {
 
-    listUsers := HashMap.fromIter<Principal, Text>(listUserEntries.vals(), 1, Principal.equal, Principal.hash);
+    listUsers := HashMap.fromIter<Principal, Users>(listUserEntries.vals(), 1, Principal.equal, Principal.hash);
   };
 
 };
