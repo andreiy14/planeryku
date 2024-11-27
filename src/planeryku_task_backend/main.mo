@@ -67,6 +67,66 @@ actor Tasks {
         };
     };
 
+    public query func searchTasksByName(name : Text) : async {
+        readyToDeploy : [Tasks];
+        open : [Tasks];
+        inProgress : [Tasks];
+        readyToTest : [Tasks];
+    } {
+
+        var result = {
+            var readyToDeploy : [Tasks] = [];
+            var open : [Tasks] = [];
+            var inProgress : [Tasks] = [];
+            var readyToTest : [Tasks] = [];
+        };
+
+        for ((_, tasks) in listTasks.entries()) {
+            switch (tasks.status) {
+                case ("readyToDeploy") {
+                    if (Text.contains(tasks.name, #text name)) {
+                        result.readyToDeploy := Array.append<Tasks>(result.readyToDeploy, [tasks]);
+                    };
+                };
+                case ("open") {
+                    if (Text.contains(tasks.name, #text name)) {
+                        result.open := Array.append<Tasks>(result.open, [tasks]);
+                    };
+                };
+                case ("inProgress") {
+                    if (Text.contains(tasks.name, #text name)) {
+                        result.inProgress := Array.append<Tasks>(result.inProgress, [tasks]);
+                    };
+                };
+                case ("readyToTest") {
+                    if (Text.contains(tasks.name, #text name)) {
+                        result.readyToTest := Array.append<Tasks>(result.readyToTest, [tasks]);
+                    };
+                };
+                case (_) {};
+            };
+        };
+
+        return {
+            readyToDeploy = result.readyToDeploy;
+            open = result.open;
+            inProgress = result.inProgress;
+            readyToTest = result.readyToTest;
+        };
+    };
+
+    public query func filterTaskByStatus(status : Text) : async [Tasks] {
+        var result : [Tasks] = [];
+
+        for ((_, task) in listTasks.entries()) {
+            if (Text.contains(task.status, #text status)) {
+                result := Array.append<Tasks>(result, [task]);
+            };
+        };
+
+        return result;
+    };
+
     // Query function for detail Tasks
     public query func getDetailTasks(taskId : Text) : async ?Tasks {
 
@@ -82,6 +142,7 @@ actor Tasks {
         readyToDeploy : [Tasks];
         open : [Tasks];
         inProgress : [Tasks];
+        readyToTest : [Tasks];
     } {
         // Initialize the result map with explicit types
         var result = {
@@ -115,6 +176,7 @@ actor Tasks {
             readyToDeploy = result.readyToDeploy;
             open = result.open;
             inProgress = result.inProgress;
+            readyToTest = result.readyToTest;
         };
     };
 
