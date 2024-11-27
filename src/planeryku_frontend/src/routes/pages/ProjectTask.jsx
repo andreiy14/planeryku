@@ -1,18 +1,37 @@
+import React, { act, useState } from "react";
 import {
 	Box,
 	Button,
 	Chip,
+	ClickAwayListener,
+	FormControl,
+	Grid2,
 	IconButton,
+	InputLabel,
 	LinearProgress,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	MenuItem,
+	Modal,
+	Popper,
+	Select,
+	TextField,
 	Typography,
 } from "@mui/material";
 import ProjectIcon from "../../components/icon/project";
 import HorizontalMenuIcon from "../../components/icon/horizontal-menu";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { useState } from "react";
 import { PlusIcon } from "../../components/icon";
 
 export default function ProjectTask() {
+	const [categories, setCategories] = useState([
+		"To Do",
+		"In Progress",
+		"Completed",
+	]);
+
 	const [tasks, setTasks] = useState([
 		{ id: 1, category: "To Do", name: "Task 1", order: 1 },
 		{ id: 2, category: "To Do", name: "Task 2", order: 2 },
@@ -21,15 +40,19 @@ export default function ProjectTask() {
 		{ id: 5, category: "Completed", name: "Task 5", order: 1 },
 	]);
 
-	const categories = ["To Do", "In Progress", "Completed"];
+	const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+	const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+	const [activeCategory, setActiveCategory] = useState("");
+	const [taskName, setTaskName] = useState("");
+	const [newCategoryName, setNewCategoryName] = useState("");
+	const [anchorEl, setAnchorEl] = React.useState(null);
 
+	// Drag and Drop Logic (unchanged)
 	const handleDragEnd = (result) => {
 		const { source, destination } = result;
 
-		// If dropped outside a droppable area
 		if (!destination) return;
 
-		// If dropped in the same location (no change in position)
 		if (
 			source.droppableId === destination.droppableId &&
 			source.index === destination.index
@@ -40,7 +63,6 @@ export default function ProjectTask() {
 		const sourceCategory = source.droppableId;
 		const destinationCategory = destination.droppableId;
 
-		// Find the task being dragged
 		const draggedTask = tasks.find(
 			(task) =>
 				task.category === sourceCategory &&
@@ -49,7 +71,6 @@ export default function ProjectTask() {
 
 		if (draggedTask) {
 			let updatedTasks = tasks.map((task) => {
-				// Adjust order for tasks in the source category
 				if (
 					task.category === sourceCategory &&
 					task.order > source.index + 1
@@ -57,7 +78,6 @@ export default function ProjectTask() {
 					return { ...task, order: task.order - 1 };
 				}
 
-				// Adjust order for tasks in the destination category
 				if (
 					task.category === destinationCategory &&
 					task.order >= destination.index + 1
@@ -68,17 +88,14 @@ export default function ProjectTask() {
 				return task;
 			});
 
-			// Update the dragged task's category and order
 			draggedTask.category = destinationCategory;
 			draggedTask.order = destination.index + 1;
 
-			// Add the updated task back to the list
 			updatedTasks = [
 				...updatedTasks.filter((task) => task.id !== draggedTask.id),
 				draggedTask,
 			];
 
-			// Sort the tasks by category and order
 			updatedTasks.sort(
 				(a, b) =>
 					a.category.localeCompare(b.category) || a.order - b.order
@@ -87,6 +104,56 @@ export default function ProjectTask() {
 			setTasks(updatedTasks);
 		}
 	};
+
+	const handleOpenTaskModal = (activeCategory) => {
+		setActiveCategory(activeCategory);
+		setIsTaskModalOpen(true);
+	};
+
+	const handleAddTask = () => {
+		if (!taskName.trim()) return;
+
+		const newTask = {
+			id: tasks.length + 1,
+			category: activeCategory,
+			name: taskName,
+			order:
+				tasks.filter((task) => task.category === activeCategory)
+					.length + 1,
+		};
+
+		setTasks([...tasks, newTask]);
+		setTaskName("");
+		setIsTaskModalOpen(false);
+	};
+
+	// New Logic for Adding Categories
+	const handleOpenCategoryModal = () => {
+		setIsCategoryModalOpen(true);
+	};
+
+	const handleAddCategory = () => {
+		if (!newCategoryName.trim() || categories.includes(newCategoryName))
+			return;
+
+		setCategories([...categories, newCategoryName]);
+		setNewCategoryName("");
+		setIsCategoryModalOpen(false);
+	};
+
+	const handleChangeCategory = (value) => {
+		setActiveCategory(value);
+	};
+
+	const handlePopper = (event) => {
+		setAnchorEl(anchorEl ? null : event.currentTarget);
+	};
+
+	const handleClickAway = () => {
+		setAnchorEl(null);
+	};
+
+	const open = Boolean(anchorEl);
 
 	return (
 		<>
@@ -119,7 +186,7 @@ export default function ProjectTask() {
 					</Box>
 				</div>
 			</div>
-			<div className="bg-stone-50 p-8 min-h-[calc(100vh-70px)]">
+			<div className="bg-stone-50 p-8 min-h-[calc(100vh-70px)] max-w-[calc(100vw-15rem)] overflow-auto">
 				<DragDropContext onDragEnd={handleDragEnd}>
 					<div className="flex gap-5">
 						{categories.map((category) => (
@@ -136,8 +203,13 @@ export default function ProjectTask() {
 													{category}
 												</h1>
 												<Chip
-													label="4"
-													onClick={() => {}}
+													label={
+														tasks.filter(
+															(task) =>
+																task.category ===
+																category
+														).length
+													}
 													style={{
 														paddingLeft: 10,
 														paddingRight: 10,
@@ -160,7 +232,7 @@ export default function ProjectTask() {
 													.sort(
 														(a, b) =>
 															a.order - b.order
-													) // Sort by order
+													)
 													.map((task, index) => (
 														<Draggable
 															key={task.id}
@@ -199,6 +271,11 @@ export default function ProjectTask() {
 														padding: 8,
 														width: "100%",
 													}}
+													onClick={() =>
+														handleOpenTaskModal(
+															category
+														)
+													}
 												>
 													+ Add a card
 												</Button>
@@ -208,9 +285,179 @@ export default function ProjectTask() {
 								)}
 							</Droppable>
 						))}
+
+						<div className="flex flex-col gap-3 pr-8">
+							<div className="flex flex-col gap-3 max-w-[300px] min-w-[300px] border border-slate-200 rounded-xl bg-white">
+								<Button
+									variant="text"
+									size="medium"
+									style={{
+										textTransform: "none",
+										borderRadius: 6,
+										padding: 8,
+										width: "100%",
+									}}
+									onClick={handleOpenCategoryModal}
+								>
+									+ Add new category
+								</Button>
+							</div>
+						</div>
 					</div>
 				</DragDropContext>
 			</div>
+
+			{/* Task Modal */}
+			<Modal
+				open={isTaskModalOpen}
+				onClose={() => setIsTaskModalOpen(false)}
+			>
+				<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-white shadow-lg p-5 rounded-xl">
+					<div className="flex justify-between">
+						<h1 className="font-semibold">Add new task</h1>
+					</div>
+					<div className="mt-5">
+						<div className="flex flex-col gap-1">
+							<span className="text-sm">Task Name</span>
+							<FormControl hiddenLabel={true}>
+								<TextField
+									size="small"
+									placeholder="Enter task name"
+									value={taskName}
+									onChange={(event) =>
+										setTaskName(event.target.value)
+									}
+								/>
+							</FormControl>
+						</div>
+						<div className="flex flex-col gap-1 mt-3">
+							<span className="text-sm">Category</span>
+							<FormControl fullWidth>
+								<Select
+									size="small"
+									value={activeCategory}
+									onChange={(event) =>
+										handleChangeCategory(event.target.value)
+									}
+								>
+									{categories.map((category, index) => {
+										return (
+											<MenuItem value={category} key={index}>
+												{category}
+											</MenuItem>
+										);
+									})}
+								</Select>
+							</FormControl>
+						</div>
+						<div className="flex flex-col gap-1 mt-3">
+							<div className="flex items-center justify-between">
+								<span className="text-sm">Members</span>
+								<Button
+									variant="text"
+									size="small"
+									style={{
+										textTransform: "none",
+										borderRadius: 6,
+									}}
+									onClick={handlePopper}
+								>
+									Edit member
+								</Button>
+								<Popper
+									id={open ? "simple-popper" : undefined}
+									open={open}
+									anchorEl={anchorEl}
+									className="z-[9999]"
+								>
+									<ClickAwayListener
+										onClickAway={handleClickAway}
+									>
+										<div className="bg-white py-1 rounded-md shadow-lg max-h-[300px] overflow-auto">
+											<div className="flex flex-col">
+												<div className="py-1 px-3 hover:bg-stone-200 cursor-pointer">
+													<span className="text-xs font-semibold">
+														Andrey
+													</span>
+												</div>
+												<div className="py-1 px-3 hover:bg-stone-200 cursor-pointer">
+													<span className="text-xs font-semibold">
+														Michael
+													</span>
+												</div>
+												<div className="py-1 px-3 hover:bg-stone-200 cursor-pointer">
+													<span className="text-xs font-semibold">
+														Kevin
+													</span>
+												</div>
+											</div>
+										</div>
+									</ClickAwayListener>
+								</Popper>
+							</div>
+							<div className="flex">
+								<div className="flex flex-col p-2 bg-stone-100 w-full rounded-lg">
+									<span className="text-xs font-semibold">
+										Michael Al Furqon
+									</span>
+								</div>
+							</div>
+						</div>
+						<div className="flex mt-5 justify-end">
+							<Button
+								variant="contained"
+								size="medium"
+								style={{
+									textTransform: "none",
+									borderRadius: 6,
+								}}
+								onClick={handleAddTask}
+							>
+								Save
+							</Button>
+						</div>
+					</div>
+				</div>
+			</Modal>
+
+			{/* Category Modal */}
+			<Modal
+				open={isCategoryModalOpen}
+				onClose={() => setIsCategoryModalOpen(false)}
+			>
+				<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 bg-white shadow-lg p-5 rounded-xl">
+					<div className="flex justify-between">
+						<h1 className="font-semibold">Create new category</h1>
+					</div>
+					<div className="mt-5">
+						<div className="flex flex-col gap-2">
+							<FormControl hiddenLabel={true}>
+								<TextField
+									placeholder="Enter category name"
+									variant="standard"
+									value={newCategoryName}
+									onChange={(event) =>
+										setNewCategoryName(event.target.value)
+									}
+								/>
+							</FormControl>
+						</div>
+						<div className="flex mt-5 justify-end">
+							<Button
+								variant="contained"
+								size="medium"
+								style={{
+									textTransform: "none",
+									borderRadius: 6,
+								}}
+								onClick={handleAddCategory}
+							>
+								Save
+							</Button>
+						</div>
+					</div>
+				</div>
+			</Modal>
 		</>
 	);
 }
