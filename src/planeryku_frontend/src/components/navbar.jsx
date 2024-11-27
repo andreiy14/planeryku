@@ -8,7 +8,7 @@ export default function Navbar() {
 
 	return (
 		<div className="">
-			<div className="p-5 border-b border-slate-200 flex">
+			<div className="p-5 border-b border-slate-200 flex h-[70px] max-h-[70px]">
 				<div className="flex gap-2 items-center ml-auto">
 					<InboxIcon/>
 					<span>
