@@ -136,7 +136,13 @@ export default function ProjectTask() {
 													{category}
 												</h1>
 												<Chip
-													label="4"
+													label={
+														tasks.filter(
+															(task) =>
+																task.category ===
+																category
+														).length
+													}
 													onClick={() => {}}
 													style={{
 														paddingLeft: 10,
