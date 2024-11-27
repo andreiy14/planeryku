@@ -2,6 +2,7 @@ import HashMap "mo:base/HashMap";
 import Text "mo:base/Text";
 import Iter "mo:base/Iter";
 import Array "mo:base/Array";
+import List "mo:base/List";
 import Source "mo:uuid/async/SourceV4";
 import UUID "mo:uuid/UUID";
 import ModuleConstant "../constant_backend/constant";
@@ -22,7 +23,7 @@ actor Projects {
     var listProject = HashMap.HashMap<Text, Project>(1, Text.equal, Text.hash);
 
     // function to add project
-    public shared func addProject(project : Project) : async Text {
+    public func addProject(project : Project) : async Text {
         try {
             let source = Source.Source();
             let uuid = UUID.toText(await source.new());
@@ -57,39 +58,41 @@ actor Projects {
     };
 
     // Query function to map and return data by status
-    public query func getProjects() : async {
+    public query func getTasks() : async {
         readyToDeploy : [Project];
         open : [Project];
         inProgress : [Project];
+        readyToTest : [Project];
     } {
-        // Initialize the result map with explicit types
-        var result = {
-            var readyToDeploy : [Project] = [];
-            var open : [Project] = [];
-            var inProgress : [Project] = [];
-        };
 
+        var readyToDeploy : List.List<Project> = List.nil<Project>();
+        var open : List.List<Project> = List.nil<Project>();
+        var inProgress : List.List<Project> = List.nil<Project>();
+        var readyToTest : List.List<Project> = List.nil<Project>();
         // Iterate through the HashMap and group by status
-        for ((_, project) in listProject.entries()) {
-            switch (project.status) {
+        for ((_, projects) in listProject.entries()) {
+            switch (projects.status) {
                 case ("readyToDeploy") {
-                    result.readyToDeploy := Array.append<Project>(result.readyToDeploy, [project]);
+                    readyToDeploy := List.push<Project>(projects, readyToDeploy);
                 };
                 case ("open") {
-                    result.open := Array.append<Project>(result.open, [project]);
+                    open := List.push<Project>(projects, open);
                 };
                 case ("inProgress") {
-                    result.inProgress := Array.append<Project>(result.inProgress, [project]);
+                    inProgress := List.push<Project>(projects, inProgress);
+                };
+                case ("readyToTest") {
+                    readyToTest := List.push<Project>(projects, readyToTest);
                 };
                 case (_) {}; // Do nothing for other status
             };
         };
 
-        // Return the grouped data (fields automatically converted back to immutable)
         return {
-            readyToDeploy = result.readyToDeploy;
-            open = result.open;
-            inProgress = result.inProgress;
+            readyToDeploy = List.toArray(readyToDeploy);
+            open = List.toArray(open);
+            inProgress = List.toArray(inProgress);
+            readyToTest = List.toArray(readyToTest);
         };
     };
 
