@@ -28,7 +28,7 @@ export default function ProjectTask() {
 
   ]);
   
-  const {isLoading, tasks, setTasks, getCategoryName} = useTask();
+  const {isLoading, tasks, setTasks, getCategoryName, updateStatusTask} = useTask();
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState('');
@@ -91,6 +91,7 @@ export default function ProjectTask() {
       );
 
       setTasks(updatedTasks);
+      updateStatusTask(draggedTask.id, destinationCategory);
     }
   };
 

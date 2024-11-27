@@ -55,14 +55,8 @@ actor Tasks {
                 "Task not found";
             };
             case (?task) {
-                let updatedTask = {
-                    id = task.id;
-                    name = task.name;
-                    description = task.description;
-                    createDate = task.createDate;
-                    status = newStatus;
-                };
-                listTasks.put(taskId, updatedTask);
+
+                listTasks.put(taskId, { task with status = newStatus });
                 "Status updated";
             };
         };

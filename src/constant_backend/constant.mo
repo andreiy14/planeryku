@@ -5,8 +5,6 @@ module {
     public let USER_FOUND = "User found";
     public let SUCCESS_ADD_USER = "Success Add User";
     public let SUCCESS_SET_ROLE_USER = "Success Set Role User";
-    
-
 
     // PROJECT MESSAGE
     public let ERROR_MESSAGE_NOT_FOUND_ID = "Error: Project ID not found";
