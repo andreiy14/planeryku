@@ -1,18 +1,29 @@
-import React, { useState } from "react";
+import React, { act, useState } from "react";
 import {
 	Box,
 	Button,
 	Chip,
+	ClickAwayListener,
 	FormControl,
+	Grid2,
 	IconButton,
+	InputLabel,
 	LinearProgress,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+	MenuItem,
 	Modal,
+	Popper,
+	Select,
 	TextField,
 	Typography,
 } from "@mui/material";
 import ProjectIcon from "../../components/icon/project";
 import HorizontalMenuIcon from "../../components/icon/horizontal-menu";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { PlusIcon } from "../../components/icon";
 
 export default function ProjectTask() {
 	const [categories, setCategories] = useState([
@@ -20,6 +31,7 @@ export default function ProjectTask() {
 		"In Progress",
 		"Completed",
 	]);
+
 	const [tasks, setTasks] = useState([
 		{ id: 1, category: "To Do", name: "Task 1", order: 1 },
 		{ id: 2, category: "To Do", name: "Task 2", order: 2 },
@@ -33,6 +45,7 @@ export default function ProjectTask() {
 	const [activeCategory, setActiveCategory] = useState("");
 	const [taskName, setTaskName] = useState("");
 	const [newCategoryName, setNewCategoryName] = useState("");
+	const [anchorEl, setAnchorEl] = React.useState(null);
 
 	// Drag and Drop Logic (unchanged)
 	const handleDragEnd = (result) => {
@@ -127,6 +140,20 @@ export default function ProjectTask() {
 		setNewCategoryName("");
 		setIsCategoryModalOpen(false);
 	};
+
+	const handleChangeCategory = (value) => {
+		setActiveCategory(value);
+	};
+
+	const handlePopper = (event) => {
+		setAnchorEl(anchorEl ? null : event.currentTarget);
+	};
+
+	const handleClickAway = () => {
+		setAnchorEl(null);
+	};
+
+	const open = Boolean(anchorEl);
 
 	return (
 		<>
@@ -259,7 +286,7 @@ export default function ProjectTask() {
 							</Droppable>
 						))}
 
-						<div className="flex flex-col gap-3">
+						<div className="flex flex-col gap-3 pr-8">
 							<div className="flex flex-col gap-3 max-w-[300px] min-w-[300px] border border-slate-200 rounded-xl bg-white">
 								<Button
 									variant="text"
@@ -290,17 +317,91 @@ export default function ProjectTask() {
 						<h1 className="font-semibold">Add new task</h1>
 					</div>
 					<div className="mt-5">
-						<div className="flex flex-col gap-2">
+						<div className="flex flex-col gap-1">
+							<span className="text-sm">Task Name</span>
 							<FormControl hiddenLabel={true}>
 								<TextField
+									size="small"
 									placeholder="Enter task name"
-									variant="standard"
 									value={taskName}
 									onChange={(event) =>
 										setTaskName(event.target.value)
 									}
 								/>
 							</FormControl>
+						</div>
+						<div className="flex flex-col gap-1 mt-3">
+							<span className="text-sm">Category</span>
+							<FormControl fullWidth>
+								<Select
+									size="small"
+									value={activeCategory}
+									onChange={(event) =>
+										handleChangeCategory(event.target.value)
+									}
+								>
+									{categories.map((category, index) => {
+										return (
+											<MenuItem value={category} key={index}>
+												{category}
+											</MenuItem>
+										);
+									})}
+								</Select>
+							</FormControl>
+						</div>
+						<div className="flex flex-col gap-1 mt-3">
+							<div className="flex items-center justify-between">
+								<span className="text-sm">Members</span>
+								<Button
+									variant="text"
+									size="small"
+									style={{
+										textTransform: "none",
+										borderRadius: 6,
+									}}
+									onClick={handlePopper}
+								>
+									Edit member
+								</Button>
+								<Popper
+									id={open ? "simple-popper" : undefined}
+									open={open}
+									anchorEl={anchorEl}
+									className="z-[9999]"
+								>
+									<ClickAwayListener
+										onClickAway={handleClickAway}
+									>
+										<div className="bg-white py-1 rounded-md shadow-lg max-h-[300px] overflow-auto">
+											<div className="flex flex-col">
+												<div className="py-1 px-3 hover:bg-stone-200 cursor-pointer">
+													<span className="text-xs font-semibold">
+														Andrey
+													</span>
+												</div>
+												<div className="py-1 px-3 hover:bg-stone-200 cursor-pointer">
+													<span className="text-xs font-semibold">
+														Michael
+													</span>
+												</div>
+												<div className="py-1 px-3 hover:bg-stone-200 cursor-pointer">
+													<span className="text-xs font-semibold">
+														Kevin
+													</span>
+												</div>
+											</div>
+										</div>
+									</ClickAwayListener>
+								</Popper>
+							</div>
+							<div className="flex">
+								<div className="flex flex-col p-2 bg-stone-100 w-full rounded-lg">
+									<span className="text-xs font-semibold">
+										Michael Al Furqon
+									</span>
+								</div>
+							</div>
 						</div>
 						<div className="flex mt-5 justify-end">
 							<Button
@@ -332,7 +433,7 @@ export default function ProjectTask() {
 						<div className="flex flex-col gap-2">
 							<FormControl hiddenLabel={true}>
 								<TextField
-									placeholder="Enter task name"
+									placeholder="Enter category name"
 									variant="standard"
 									value={newCategoryName}
 									onChange={(event) =>
