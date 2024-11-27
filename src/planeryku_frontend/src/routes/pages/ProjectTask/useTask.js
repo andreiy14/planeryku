@@ -24,7 +24,17 @@ const useTask = () => {
   };
 
 
-
+  const updateStatusTask = async (taskId, newStatus) => {
+    try {
+      setIsLoading(true);
+      await planeryku_task_backend.updateTaskStatus(taskId, newStatus);
+      console.log('Task status updated successfully');
+    } catch (error) {
+      console.log('Error updating task status:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getListTask = async () => {
     try {
@@ -72,6 +82,7 @@ const useTask = () => {
     tasks,
     setTasks,
     getCategoryName,
+    updateStatusTask,
   };
 };
 
