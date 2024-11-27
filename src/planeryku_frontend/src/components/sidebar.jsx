@@ -13,7 +13,7 @@ export default function Sidebar() {
 					showSidebar ? "w-full translate-x-0" : "-translate-x-full"
 				} border-r fixed h-full transition-all flex flex-col justify-between pb-5 md:w-60 md:translate-x-0 z-[5]`}
 			>
-				<div className="p-5 border border-slate-200 border-r-0">
+				<div className="p-5 border border-slate-200 border-r-0 h-[70px] max-h-[70px]">
 					<h1 className="text-3xl font-bold">
 						<span className="text-indigo-800">Planery</span> Ku
 					</h1>
