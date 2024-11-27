@@ -67,16 +67,52 @@ actor Tasks {
         };
     };
 
-    public query func searchTasksByName(name : Text) : async [Tasks] {
-        var result : [Tasks] = [];
+    public query func searchTasksByName(name : Text) : async {
+        readyToDeploy : [Tasks];
+        open : [Tasks];
+        inProgress : [Tasks];
+        readyToTest : [Tasks];
+    } {
 
-        for ((_, task) in listTasks.entries()) {
-            if (Text.contains(task.name, #text name)) {
-                result := Array.append<Tasks>(result, [task]);
+        var result = {
+            var readyToDeploy : [Tasks] = [];
+            var open : [Tasks] = [];
+            var inProgress : [Tasks] = [];
+            var readyToTest : [Tasks] = [];
+        };
+
+        for ((_, tasks) in listTasks.entries()) {
+            switch (tasks.status) {
+                case ("readyToDeploy") {
+                    if (Text.contains(tasks.name, #text name)) {
+                        result.readyToDeploy := Array.append<Tasks>(result.readyToDeploy, [tasks]);
+                    };
+                };
+                case ("open") {
+                    if (Text.contains(tasks.name, #text name)) {
+                        result.open := Array.append<Tasks>(result.open, [tasks]);
+                    };
+                };
+                case ("inProgress") {
+                    if (Text.contains(tasks.name, #text name)) {
+                        result.inProgress := Array.append<Tasks>(result.inProgress, [tasks]);
+                    };
+                };
+                case ("readyToTest") {
+                    if (Text.contains(tasks.name, #text name)) {
+                        result.readyToTest := Array.append<Tasks>(result.readyToTest, [tasks]);
+                    };
+                };
+                case (_) {};
             };
         };
 
-        return result;
+        return {
+            readyToDeploy = result.readyToDeploy;
+            open = result.open;
+            inProgress = result.inProgress;
+            readyToTest = result.readyToTest;
+        };
     };
 
     public query func filterTaskByStatus(status : Text) : async [Tasks] {
@@ -106,6 +142,7 @@ actor Tasks {
         readyToDeploy : [Tasks];
         open : [Tasks];
         inProgress : [Tasks];
+        readyToTest : [Tasks];
     } {
         // Initialize the result map with explicit types
         var result = {
@@ -139,6 +176,7 @@ actor Tasks {
             readyToDeploy = result.readyToDeploy;
             open = result.open;
             inProgress = result.inProgress;
+            readyToTest = result.readyToTest;
         };
     };
 
