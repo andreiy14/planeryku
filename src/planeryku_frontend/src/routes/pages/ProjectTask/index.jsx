@@ -235,6 +235,12 @@ export default function ProjectTask() {
 		});
 	};
 
+	const handleDeleteCategory = () => {
+		setCategoryPopper(null);
+		const updatedCategory = categories.filter(category => category !== activeCategory)
+		setCategories(updatedCategory)
+	}
+
 	const toggleMember = (id) => {
 		setMembers((prevMembers) =>
 			prevMembers.map((member) =>
@@ -435,7 +441,7 @@ export default function ProjectTask() {
 				<MenuItem onClick={handleEditCategory}>
 					<span className="text-sm">Edit</span>
 				</MenuItem>
-				<MenuItem onClick={handleCloseCategory}>
+				<MenuItem onClick={handleDeleteCategory}>
 					<span className="text-sm text-rose-800">Delete</span>
 				</MenuItem>
 			</Menu>
