@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
 import { planeryku_task_backend } from '../../../../../declarations/planeryku_task_backend';
-import { get } from 'react-hook-form';
-
-
 
 const useTask = () => {
   const [tasks, setTasks] = useState([]);
@@ -22,7 +19,6 @@ const useTask = () => {
       return 'Unknown';
     }
   };
-
 
   const updateStatusTask = async (taskId, newStatus) => {
     try {
@@ -73,7 +69,7 @@ const useTask = () => {
 
   useEffect(() => {
 
-    getListTask();
+    // getListTask();
   }, []);
 
 

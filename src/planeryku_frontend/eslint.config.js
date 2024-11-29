@@ -18,9 +18,10 @@ export default [
       // React-specific rules
       'react/prop-types': 'off', // Disable prop-types if using TypeScript
       'react/no-unescaped-entities': 'warn', // Warn about unescaped characters in JSX
+      
 
       // Code style rules
-      quotes: ['error', 'single'], // Enforce single quotes
+      // quotes: ['error', 'single'], // Enforce single quotes
       semi: ['error', 'always'], // Require semicolons
       indent: ['error', 2], // Enforce 2 spaces for indentation
       'comma-dangle': ['error', 'always-multiline'], // Require trailing commas for multiline objects/arrays
@@ -34,11 +35,12 @@ export default [
       // 'prettier/prettier': 'error',
     },
   },
-  // { extends: [
-  //   'eslint:recommended',
-  //   'plugin:react/recommended',
-  //   'plugin:prettier/recommended', // Enables Prettier
-  // ]},
+  { extends: [
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:prettier/recommended', // Enables Prettier
+    'plugin:react/jsx-runtime'
+  ]},
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
 ];
