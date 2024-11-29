@@ -14,12 +14,12 @@ export default [
       'no-unused-vars': 'warn', // Warn if there are unused variables
       'no-console': 'off', // Allow the use of console.log
       'no-debugger': 'error', // Disallow debugger in production
-
+      "react/react-in-jsx-scope": "off",
+      
       // React-specific rules
       'react/prop-types': 'off', // Disable prop-types if using TypeScript
       'react/no-unescaped-entities': 'warn', // Warn about unescaped characters in JSX
       
-
       // Code style rules
       // quotes: ['error', 'single'], // Enforce single quotes
       semi: ['error', 'always'], // Require semicolons
@@ -35,12 +35,7 @@ export default [
       // 'prettier/prettier': 'error',
     },
   },
-  { extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:prettier/recommended', // Enables Prettier
-    'plugin:react/jsx-runtime'
-  ]},
+  
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,
 ];
