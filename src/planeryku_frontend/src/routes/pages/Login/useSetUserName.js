@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { planeryku_backend } from '../../../../../declarations/planeryku_backend';
 import { Principal } from '@dfinity/principal';
-import { useAuthID } from '../../../../hooks';
+import { useAuthID } from '../../../hooks';
 import { useState } from 'react';
 
 

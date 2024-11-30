@@ -1,6 +1,6 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import setUserName from "./useSetUserName";
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import setUserName from './useSetUserName';
 
 function LoginPage() {
   const { onSubmit, isLoading } = setUserName();
@@ -34,8 +34,8 @@ function LoginPage() {
               Username <span className="text-red-500">*</span>
             </label>
             <input
-              {...register("username", {
-                required: "This field is required",
+              {...register('username', {
+                required: 'This field is required',
               })}
               type="text"
               id="username"
