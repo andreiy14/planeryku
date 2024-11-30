@@ -1,8 +1,6 @@
 import HashMap "mo:base/HashMap";
 import Text "mo:base/Text";
 import Iter "mo:base/Iter";
-import Array "mo:base/Array";
-import List "mo:base/List";
 import Source "mo:uuid/async/SourceV4";
 import UUID "mo:uuid/UUID";
 import ModuleConstant "../constant_backend/constant";
@@ -16,8 +14,12 @@ actor Projects {
         description : Text;
         startDate : Text;
         endDate : Text;
+        listStatus : [Text]
+;
 
     };
+
+   
     private stable var listProjectStable : [(Text, Project)] = [];
 
     var listProject = HashMap.HashMap<Text, Project>(1, Text.equal, Text.hash);
@@ -27,7 +29,7 @@ actor Projects {
         try {
             let source = Source.Source();
             let uuid = UUID.toText(await source.new());
-
+  
             let newProject = {
                 id = uuid;
                 name = project.name;
@@ -35,6 +37,7 @@ actor Projects {
                 description = project.description;
                 startDate = project.startDate;
                 endDate = project.endDate;
+                listStatus = project.listStatus;
             };
 
             listProject.put(uuid, newProject);
@@ -58,42 +61,11 @@ actor Projects {
     };
 
     // Query function to map and return data by status
-    public query func getTasks() : async {
-        readyToDeploy : [Project];
-        open : [Project];
-        inProgress : [Project];
-        readyToTest : [Project];
-    } {
+    public query func getProjects() : async [Project] {
 
-        var readyToDeploy : List.List<Project> = List.nil<Project>();
-        var open : List.List<Project> = List.nil<Project>();
-        var inProgress : List.List<Project> = List.nil<Project>();
-        var readyToTest : List.List<Project> = List.nil<Project>();
-        // Iterate through the HashMap and group by status
-        for ((_, projects) in listProject.entries()) {
-            switch (projects.status) {
-                case ("readyToDeploy") {
-                    readyToDeploy := List.push<Project>(projects, readyToDeploy);
-                };
-                case ("open") {
-                    open := List.push<Project>(projects, open);
-                };
-                case ("inProgress") {
-                    inProgress := List.push<Project>(projects, inProgress);
-                };
-                case ("readyToTest") {
-                    readyToTest := List.push<Project>(projects, readyToTest);
-                };
-                case (_) {}; // Do nothing for other status
-            };
-        };
+      
 
-        return {
-            readyToDeploy = List.toArray(readyToDeploy);
-            open = List.toArray(open);
-            inProgress = List.toArray(inProgress);
-            readyToTest = List.toArray(readyToTest);
-        };
+        return Iter.toArray(listProject.vals());
     };
 
     // func to update  project
@@ -124,10 +96,12 @@ actor Projects {
 
     system func preupgrade() {
         listProjectStable := Iter.toArray(listProject.entries());
+        // listProjectStable := []
     };
 
     system func postupgrade() {
         listProject := HashMap.fromIter<Text, Project>(listProjectStable.vals(), 1, Text.equal, Text.hash);
+        // listProject := HashMap.HashMap<Text, Project>(1, Text.equal, Text.hash);
     };
 
 };

@@ -63,7 +63,6 @@ const theme = createTheme({
 
 const init = async () => {
   const authClient = await AuthClient.create();
-  console.log('auth', await authClient.isAuthenticated());
   const handleRender = (authClient) => {
     return ReactDOM.createRoot(document.getElementById('root')).render(
       <React.StrictMode>
@@ -75,31 +74,30 @@ const init = async () => {
       </React.StrictMode>,
     );
   };
+  if (await authClient.isAuthenticated()) {
+    handleRender(authClient);
+  } else {
+    await authClient.login({
+      identityProvider: 'https://identity.ic0.app/#authorize',
+      onSuccess: async () => {
+        handleRender(authClient);
+      },
+      onError: (error) => {
+        console.log('Error logging in', error);
+      },
+    });
+  }
 
-  handleRender(authClient)
-  // if (await authClient.isAuthenticated()) {
-  //   handleRender(authClient);
-  // } else {
-  //   await authClient.login({
-  //     identityProvider: 'https://identity.ic0.app/#authorize',
-  //     onSuccess: async () => {
-  //       handleRender(authClient);
-  //     },
-  //     onError: (error) => {
-  //       console.log('Error logging in', error);
-  //     },
-  //   });
-  // }
+  await authClient.login({
+    identityProvider: "https://identity.ic0.app/#authorize",
+    onSuccess: async () => {
+      handleRender(authClient);
+    },
+    onError: (error) => {
+      console.log("Error logging in", error);
+    },
+  });
 
-  // await authClient.login({
-  //   identityProvider: "https://identity.ic0.app/#authorize",
-  //   onSuccess: async () => {
-  //     handleRender(authClient);
-  //   },
-  //   onError: (error) => {
-  //     console.log("Error logging in", error);
-  //   },
-  // });
 };
 
 init();

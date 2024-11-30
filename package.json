@@ -22,8 +22,10 @@
     "@hello-pangea/dnd": "^17.0.0",
     "@mui/icons-material": "^6.1.8",
     "@mui/material": "^6.1.8",
+    "prop-types": "^15.8.1",
     "react-hook-form": "^7.53.2",
-    "react-router-dom": "^6.28.0"
+    "react-router-dom": "^6.28.0",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
